@@ -118,8 +118,10 @@ func (s *testCoordinatorSuite) TestSchedule(c *C) {
 	c.Assert(co.dispatch(region), IsNil)
 	c.Assert(co.getOperator(region.GetId()), IsNil)
 
-	// Turn off normal balance.
-	cfg.MinBalanceDiffRatio = 1
+	// Turn off normal balance. Clone to prevent data race.
+	cloneCfg := *cfg
+	cloneCfg.MinBalanceDiffRatio = 1
+	opt.store(&cloneCfg)
 
 	// Test replica checker.
 	// Peer in store 4 is down.
